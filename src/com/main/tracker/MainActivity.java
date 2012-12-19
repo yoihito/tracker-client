@@ -1,28 +1,22 @@
 package com.main.tracker;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Calendar;
-import java.util.Scanner;
 
-import android.os.Bundle;
 import android.app.Activity;
-import android.util.Log;
+import android.content.Context;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
-import android.support.v4.app.NavUtils;
-import android.location.*;
-import android.widget.*;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.content.*;
-import android.net.*;
-import org.apache.*;
+import android.widget.EditText;
 
 public class MainActivity extends Activity implements LocationListener {
 
@@ -39,14 +33,15 @@ public class MainActivity extends Activity implements LocationListener {
 		lm.removeUpdates(this);
 	}
 	
-	public void sendCoordOnServer(String nurl) {
+	public synchronized void sendCoordOnServer(String nurl) {
 		try {
 			URL url = new URL(nurl);
 			URLConnection conn = url.openConnection();
 			conn.connect();
 			BufferedReader cin = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			StringBuilder str = null;
 			String s=cin.readLine();
+			if (s.equals("success"))
+				return;
 		} catch (Exception e) {
 			status.setText(status.getText()+nl+"Can't send coords");
 			e.printStackTrace();
